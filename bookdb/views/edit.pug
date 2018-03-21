@@ -1,0 +1,80 @@
+﻿extends _layout.pug
+
+block header
+  link(href='stylesheets/edit.css', rel='stylesheet', type='text/css')
+  script(src='javascripts/edit.js')
+  title 蔵書一覧
+
+block content
+  #left_column
+    h1 蔵書一覧
+    #books_wrapper
+      table
+        thead
+          tr
+            th.books_id ID
+            th.books_name タイトル
+            th.books_is_xrated X指定
+            th.books_circles サークル
+            th.books_authors 著者
+            th.books_format 形式
+            th.books_size サイズ
+            th.books_published_on 発行日
+            th.books_bought_on 購入日
+            th.books_location 保管場所
+            th.books_media 媒体
+            th.books_tags タグ
+            th.books_note 備考
+        tbody#booklist
+  #right_column
+    #vertical_bar
+    #upper_block
+      #book_top_command
+        input#book_new.command(type='button', value='新規作成', disabled='disabled')
+        input#book_set_default(type='button', value='規定値に設定', disabled='disabled')
+      table#book
+        tr
+          th ID
+          td#book_id
+        tr
+          th タイトル
+          td#book_name
+        tr
+          th X指定
+          td#book_is_xrated
+        tr
+          th サークル
+          td#book_circles
+        tr
+          th 著者
+          td#book_authors
+        tr
+          th 形式
+          td#book_format
+        tr
+          th サイズ
+          td#book_size
+        tr
+          th 発行日
+          td#book_published_on
+        tr
+          th 購入日
+          td#book_bought_on
+        tr
+          th 保管場所
+          td#book_location
+        tr
+          th 媒体
+          td#book_media
+        tr
+          th タグ
+          td#book_tags
+        tr
+          th 備考
+          td#book_note
+        tr
+          th#book_commands(colspan='2')
+    #horizontal_bar
+    #lower_block
+      table
+        tbody#attribute

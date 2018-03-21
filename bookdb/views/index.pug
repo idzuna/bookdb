@@ -1,0 +1,49 @@
+﻿extends _layout.pug
+
+block header
+  title #{config.applicationName}
+
+block content
+  h1 #{config.applicationName}
+  p Verison #{config.applicationVersion} &nbsp;
+    a(href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false") Tweet
+  script(async src="https://platform.twitter.com/widgets.js" charset="utf-8")
+  if (config.multiUserMode && !user)
+    hr
+    ul
+      li
+        a(href="auth/twitter") Twitterでログイン
+  hr
+  h2 これはなに？
+  ul
+    li
+      a(href="images/screenshot01.png")
+        img(src="images/screenshot01_thumb.png")
+    li 同人誌用の蔵書管理ツールです
+    li 作者が自分で作って使っていた物を公開しました
+    li 蔵書データはユーザーごとに独立です．みんなでひとつのデータベースを作る，というものではありません
+  h2 おことわり
+  ul
+    li: strong Internet Explorer では動きません
+    li Windows 版 Firefox, Chrome の最新バージョンでのみ動作確認をしています
+    li Twitter 認証はログイン処理にのみ使用しており，勝手にツイートを収集したり，投稿することはありません
+    li 本サービスを利用したことで起こった損害に対して作者は一切責任を負いません
+    li 予告なく改変またはサービスを終了することがあります
+    li
+      | 意見，要望などは&nbsp;
+      a(href="https://twitter.com/idzuna_tan" target="_blank") @idzuna_tan
+      | &nbsp;へ
+  h2 TODO（気が向いたらやる）
+  ul
+    li ソースコード公開（CC BY-NC-SA 予定，商用は別途相談）
+    li ユーザー定義カラム
+    li Internet Explorer への対応
+    li スマートフォンへの対応
+    li 検索・ソート機能
+    li サムネイルアップロード・表示機能
+  hr
+  p 作者:&nbsp;
+    a(href="https://twitter.com/idzuna_tan" target="_blank") @idzuna_tan
+    | &nbsp;,&nbsp;
+    a(href="https://erir.in/" target="_blank") https://erir.in/
+      

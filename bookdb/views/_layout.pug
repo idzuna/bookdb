@@ -1,0 +1,24 @@
+﻿doctype html
+html
+  head
+    meta(charset='utf-8')
+    link(href='stylesheets/bookdb.css', rel='stylesheet', type='text/css')
+    script(src='javascripts/bookdb.js')
+    block header
+  body
+    #navigation
+      if (!config.multiUserMode || user)
+        #mainmenu
+          a(href="./") トップ
+          | &nbsp;|&nbsp;
+          a(href="edit") 蔵書一覧
+          | &nbsp;|&nbsp;
+          a(href="manage") データ管理
+      if (config.multiUserMode && user)
+        #usermenu
+          | #{user.display_name} さん
+          | &nbsp;|&nbsp;
+          a(href="logout") ログアウト
+      .clear
+    #content
+      block content

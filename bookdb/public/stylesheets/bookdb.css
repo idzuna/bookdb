@@ -1,0 +1,40 @@
+﻿
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    color: #222;
+}
+
+#navigation {
+    background-color: whitesmoke;
+    border-bottom: 1px solid silver;
+}
+
+#navigation a {
+    color: navy;
+    text-decoration: none;
+}
+
+#navigation a:hover {
+    background-color: #ffe8f4;
+}
+
+#mainmenu {
+    float: left;
+}
+
+#usermenu {
+    float: right;
+    text-align: right;
+}
+
+#content {
+    margin: .5em;
+}
+
+.clear {
+    clear: both;
+}
+

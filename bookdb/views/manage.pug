@@ -1,0 +1,29 @@
+﻿extends _layout.pug
+
+block header
+  script(src='javascripts/manage.js')
+  title データ管理
+
+block content
+  h1 データ管理
+  hr
+  h2 エクスポート
+  p 蔵書データをファイルに書き出してダウンロードします．
+  p
+    input(type="button" id="export" value="エクスポート" disabled="disabled")
+  hr
+  h2 インポート
+  p 以前エクスポートした蔵書データファイルをサーバーにアップロードします．
+  p 実行すると，サーバー上の現在の蔵書データは上書きされ，元の状態には戻せません．
+  p アップロードするファイルを指定して下のボタンを押すと確認のダイアログが表示され，OKを押すと実行します．
+  p
+    input(type="file" id="import_file")
+  p
+    input(type="button" id="import" value="インポート" disabled="disabled")
+  hr
+  h2 クリア
+  p 蔵書データをクリアし，初期状態に戻します．
+  p 実行すると元の状態には戻せません．
+  p 下のボタンを押すと確認のダイアログが表示され，OKを押すと実行します．
+  p
+    input(type="button" id="clear" value="クリア" disabled="disabled")
