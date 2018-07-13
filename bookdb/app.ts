@@ -7,6 +7,7 @@ import twitter = require('passport-twitter');
 import session = require('express-session');
 import sqlite3 = require('sqlite3');
 import cookieParser = require('cookie-parser');
+import net = require('net');
 
 import config from './config';
 import secrets from './secrets';
@@ -152,5 +153,5 @@ app.use((err: any, req, res, next) => {
 app.set('port', process.env.PORT || 3000);
 
 var server = app.listen(app.get('port'), function () {
-    debug('Express server listening on port ' + server.address().port);
+    debug('Express server listening on port ' + (<net.AddressInfo>server.address()).port);
 });
