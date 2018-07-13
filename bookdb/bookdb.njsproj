@@ -71,9 +71,6 @@
     <Content Include="views\_layout.pug" />
     <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="config.ts" />
-    <TypeScriptCompile Include="images.ts">
-      <SubType>Code</SubType>
-    </TypeScriptCompile>
     <TypeScriptCompile Include="public\javascripts\bookdb.ts" />
     <TypeScriptCompile Include="public\javascripts\edit.ts" />
     <TypeScriptCompile Include="public\javascripts\manage.ts">

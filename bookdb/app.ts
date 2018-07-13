@@ -1,4 +1,9 @@
-﻿import debug = require('debug');
+﻿let system = {
+    'applicationName': '同人誌蔵書管理ツール',
+    'applicationVersion': '1.1.0'
+};
+
+import debug = require('debug');
 import express = require('express');
 import bodyParser = require('body-parser');
 import path = require('path');
@@ -85,6 +90,7 @@ if (config.multiUserMode) {
 
 app.get('/', function (req, res) {
     res.status(200).render('index', {
+        'system': system,
         'config': config,
         'user': req.user
     });
@@ -97,6 +103,7 @@ app.get('/edit', function (req, res) {
     }
     res.cookie('bookdbsession', '' + Math.random());
     res.status(200).render('edit', {
+        'system': system,
         'config': config,
         'user': req.user
     });
@@ -109,6 +116,7 @@ app.get('/manage', function (req, res) {
     }
     res.cookie('bookdbsession', '' + Math.random());
     res.status(200).render('manage', {
+        'system': system,
         'config': config,
         'user': req.user
     });

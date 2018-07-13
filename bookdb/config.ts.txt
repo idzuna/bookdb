@@ -1,5 +1,4 @@
 ﻿export default {
-    applicationName: '同人誌蔵書管理ツール',
-    applicationVersion: '1.1.0',
+    siteTitle: '同人誌蔵書管理ツール',
     multiUserMode: false
 };

@@ -422,7 +422,9 @@ router.put('/images/:id', upload.single('image'), async function (req, res) {
     let filename: string;
     try {
         id = expectPositive(req.params.id);
-        filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'));
+        await fs.mkdirs(dirname);
+        filename = path.join(dirname, '' + id);
     } catch (e) {
         res.status(400).end();
         return;

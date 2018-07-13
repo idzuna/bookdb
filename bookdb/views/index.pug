@@ -1,11 +1,11 @@
 ﻿extends _layout.pug
 
 block header
-  title #{config.applicationName}
+  title #{config.siteTitle}
 
 block content
-  h1 #{config.applicationName}
-  p Verison #{config.applicationVersion} &nbsp;
+  h1 #{config.siteTitle}
+  p
     a(href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false") Tweet
   script(async src="https://platform.twitter.com/widgets.js" charset="utf-8")
   if (config.multiUserMode && !user)
@@ -44,6 +44,7 @@ block content
     li スマートフォンへの対応
     li 検索・ソート機能
   hr
+  p #{system.applicationName} Version #{system.applicationVersion}
   p 作者:&nbsp;
     a(href="https://twitter.com/idzuna_tan" target="_blank") @idzuna_tan
     | &nbsp;,&nbsp;
