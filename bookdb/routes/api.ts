@@ -2,11 +2,14 @@
 import express = require('express');
 import path = require('path');
 import multer = require('multer');
+import jimp = require('jimp');
+import fs = require('fs-extra');
 import * as bookdb from '../bookdb';
 
-let upload = multer({ dest: 'uploads/', 'limits': { 'fileSize': 20 * 1024 * 1024 } });
+let upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
+const ignore = function (e) { };
 
 
 function expectPositive(value: any)
@@ -303,6 +306,11 @@ router.delete('/tables', async function (req, res) {
     try {
         let db = await prepareDB(req);
         await db.clearAllTables();
+        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'));
+        let dir = await fs.readdir(dirname);
+        dir.forEach(function (file) {
+            fs.unlink(path.join(dirname, file));
+        });
         res.status(200).end();
     } catch (e) {
         res.status(500).end();
@@ -367,6 +375,72 @@ router.get('/books', async function (req, res) {
     } catch (e) {
         res.status(500).end();
     }
+});
+
+router.delete('/images/:id', async function (req, res) {
+    try {
+        let id = expectPositive(req.params.id);
+        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+        fs.unlink(filename, ignore);
+        fs.unlink(filename + '.jpg', ignore);
+        res.status(200).end();
+    } catch (e) {
+        res.status(400).end();
+    }
+});
+
+router.get('/images/:id', async function (req, res) {
+    try {
+        let id = expectPositive(req.params.id);
+        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+        let image = await jimp.read(filename);
+        res.type(image.getMIME());
+        res.sendFile(filename);
+    } catch (e) {
+        res.status(302).location('../../images/noimage.png').end();
+    }
+});
+
+router.get('/thumbnails/:id', async function (req, res) {
+    try {
+        let id = expectPositive(req.params.id);
+        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id + '.jpg');
+        res.sendFile(filename, function (err) {
+            if (err) {
+                res.status(302).location('../../images/noimage.png').end();
+            }
+        });
+    } catch (e) {
+        res.status(302).location('../../images/noimage.png').end();
+    }
+});
+
+router.put('/images/:id', upload.single('image'), async function (req, res) {
+    
+    // validate request
+    let id: number;
+    let filename: string;
+    try {
+        id = expectPositive(req.params.id);
+        filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+    } catch (e) {
+        res.status(400).end();
+        return;
+    }
+
+    // generate thumbnail
+    try {
+        let image = await jimp.read(req.file.path);
+        image.scaleToFit(256, 256).quality(98).write(filename + '.jpg');
+        fs.move(req.file.path, filename, { overwrite: true }, ignore);
+    } catch (e) {
+        fs.unlink(req.file.path, ignore);
+        fs.unlink(filename, ignore);
+        fs.unlink(filename + '.jpg', ignore);
+        res.status(400).end();
+        return;
+    }
+    res.status(200).end();
 });
 
 

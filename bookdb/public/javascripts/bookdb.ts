@@ -57,6 +57,7 @@ let db = new class {
     sizes: { [key: number]: Size } = { };
     formats: { [key: number]: Format } = { };
     books: { [key: number]: Book } = {};
+    thumbnails: { [key: number]: string } = {};
     user = new User();
     session = '';
     valid = false;
@@ -72,7 +73,7 @@ let db = new class {
         return '';
     }
 
-    private sendJSON(method: string, url: string, data: any) {
+    private sendRequest(method: string, url: string, data: any = null, type: string = null) {
         return new Promise<any>(function (resolve, reject) {
             if (!db.valid) {
                 return;
@@ -98,13 +99,19 @@ let db = new class {
                 }
             }
             xhr.open(method, 'api/' + url, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(data ? JSON.stringify(data) : null);
+            if (type) {
+                xhr.setRequestHeader('Content-Type', type);
+            }
+            xhr.send(data);
         });
     }
 
+    private sendJSON(method: string, url: string, data: any) {
+        return this.sendRequest(method, url, JSON.stringify(data), 'application/json');
+    }
+
     private getJSON(url: string) {
-        return this.sendJSON('GET', url, null);
+        return this.sendRequest('GET', url);
     }
 
     async initialize() {
@@ -325,36 +332,37 @@ let db = new class {
 
 
     async deleteAuthor(id: number) {
-        await db.sendJSON('DELETE', 'authors/' + id, null);
+        await db.sendRequest('DELETE', 'authors/' + id);
     }
 
     async deleteCircle(id: number) {
-        await db.sendJSON('DELETE', 'circles/' + id, null);
+        await db.sendRequest('DELETE', 'circles/' + id);
     }
 
     async deleteFormat(id: number) {
-        await db.sendJSON('DELETE', 'formats/' + id, null);
+        await db.sendRequest('DELETE', 'formats/' + id);
     }
 
     async deleteMedia(id: number) {
-        await db.sendJSON('DELETE', 'media/' + id, null);
+        await db.sendRequest('DELETE', 'media/' + id);
     }
 
     async deleteSize(id: number) {
-        await db.sendJSON('DELETE', 'sizes/' + id, null);
+        await db.sendRequest('DELETE', 'sizes/' + id);
     }
 
     async deleteTag(id: number) {
-        await db.sendJSON('DELETE', 'tags/' + id, null);
+        await db.sendRequest('DELETE', 'tags/' + id);
     }
 
     async deleteBook(id: number) {
-        await db.sendJSON('DELETE', 'books/' + id, null);
+        await db.sendRequest('DELETE', 'books/' + id);
+        db.thumbnails[id] = 'api/thumbnails/' + id + '?' + (new Date().getTime());
     }
 
 
     clearAllTables() {
-        return db.sendJSON('DELETE', 'tables', null);
+        return db.sendRequest('DELETE', 'tables');
     }
     exportAllTables() {
         return db.getJSON('tables');
@@ -362,5 +370,26 @@ let db = new class {
 
     importAllTables(tables: any) {
         return db.sendJSON('POST', 'tables', tables);
+    }
+
+
+    async deleteImage(id: number) {
+        await db.sendRequest('DELETE', 'images/' + id);
+        db.thumbnails[id] = 'api/thumbnails/' + id + '?' + (new Date().getTime());
+    }
+
+    async uploadImage(id: number, file: File) {
+        let formData = new FormData();
+        formData.append('image', file);
+        await db.sendRequest('PUT', 'images/' + id, formData);
+        db.thumbnails[id] = 'api/thumbnails/' + id + '?' + (new Date().getTime());
+    }
+
+    getThumbnailUrl(id: number) {
+        return db.thumbnails[id] ? db.thumbnails[id] : 'api/thumbnails/' + id;
+    }
+
+    getImageUrl(id: number) {
+        return 'api/images/' + id;
     }
 }

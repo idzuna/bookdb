@@ -1367,6 +1367,7 @@ let bookDetailWindow = new class {
 
     close() {
         (<HTMLInputElement>document.getElementById('book_set_default')).disabled = true;
+        removeAllChildNodes(document.getElementById('book_image'));
         removeAllChildNodes(document.getElementById('book_id'));
         removeAllChildNodes(document.getElementById('book_name'));
         removeAllChildNodes(document.getElementById('book_is_xrated'));
@@ -1390,6 +1391,51 @@ let bookDetailWindow = new class {
 
         let format = book.format_id ? db.formats[book.format_id].name : '';
         let size = book.size_id ? db.sizes[book.size_id].name : '';
+        {
+            let cell = document.getElementById('book_image');
+            let img = document.createElement('img');
+            img.src = db.getThumbnailUrl(book.id);
+            let a = document.createElement('a');
+            a.href = db.getImageUrl(book.id);
+            a.target = '_blank';
+            a.appendChild(img);
+            cell.appendChild(a);
+            cell.appendChild(document.createElement('br'));
+            let fileInput = createInput('file', 'ファイル');
+            fileInput.onchange = function () {
+                setEditing(true);
+                db.uploadImage(book.id, fileInput.files[0]).then(async function () {
+                    img.src = db.getThumbnailUrl(book.id);
+                    setEditing(false);
+                }).catch(function () {
+                    window.alert('アップロードに失敗しました');
+                    img.src = db.getThumbnailUrl(book.id);
+                    setEditing(false);
+                });
+            };
+            let uploadButton = createInput('button', 'アップロード');
+            uploadButton.className = 'command';
+            uploadButton.onclick = function () {
+                fileInput.click();
+            };
+            cell.appendChild(uploadButton);
+            let deleteButton = createInput('button', '画像を削除');
+            deleteButton.className = 'command';
+            deleteButton.onclick = function () {
+                if (window.confirm('画像を削除してもよろしいですか？')) {
+                    setEditing(true);
+                    db.deleteImage(book.id).then(async function () {
+                        img.src = db.getThumbnailUrl(book.id);
+                        setEditing(false);
+                    }).catch(function () {
+                        window.alert('削除に失敗しました');
+                        img.src = db.getThumbnailUrl(book.id);
+                        setEditing(false);
+                    });
+                }
+            };
+            cell.appendChild(deleteButton);
+        }
         document.getElementById('book_id').innerText = '' + book.id;
         document.getElementById('book_name').innerText = book.name;
         document.getElementById('book_is_xrated').innerText = book.is_xrated ? 'はい' : 'いいえ';

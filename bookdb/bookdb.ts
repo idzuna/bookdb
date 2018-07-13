@@ -267,6 +267,14 @@ export class BookDB {
         return this.promisedAll('SELECT id, name FROM tags', []);
     }
 
+    async getBook(id: number) {
+        let book = <Book>await this.promisedGet('SELECT id, name, format_id, size_id, is_xrated, published_on, bought_on, location, note FROM books WHERE id=?', [id]);
+        book.author_ids = this.extractElements('author_id', await this.promisedAll('SELECT author_id FROM books_authors WHERE book_id=?', [id]));
+        book.circle_ids = this.extractElements('circle_id', await this.promisedAll('SELECT circle_id FROM books_circles WHERE book_id=?', [id]));
+        book.media_ids = this.extractElements('media_id', await this.promisedAll('SELECT media_id FROM books_media WHERE book_id=?', [id]));
+        book.tag_ids = this.extractElements('tag_id', await this.promisedAll('SELECT tag_id FROM books_tags WHERE book_id=?', [id]));
+        return book;
+    }
     async getAuthor(id: number) {
         let author = <Author>await this.promisedGet('SELECT * FROM authors WHERE id=?', [id]);
         author.urls = this.extractElements('url', await this.promisedAll('SELECT url FROM authors_urls WHERE author_id=?', [id]));

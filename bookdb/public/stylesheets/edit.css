@@ -110,6 +110,14 @@ table {
     text-align: center;
 }
 
+#book_image {
+    text-align: center;
+}
+
+#book_image img {
+    max-width: 100%;
+}
+
 .active th, .active td {
     background-color: #ffe8f4 !important;
 }
