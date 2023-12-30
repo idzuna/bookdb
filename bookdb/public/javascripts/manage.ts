@@ -21,16 +21,19 @@ window.onload = function () {
         a.href = window.URL.createObjectURL(blob);
         a.innerText = 'ダウンロード';
         a.download = 'bookdb.json';
-        exportButton.parentElement.appendChild(a);
+        exportButton.parentElement?.appendChild(a);
     };
 
     importFile.onchange = function () {
+        if (!importFile.files) {
+            return;
+        }
         let file = importFile.files[0];
         let reader = new FileReader();
         reader.readAsText(file);
         reader.onload = function (e) {
             try {
-                let tables = JSON.parse(reader.result);
+                let tables = JSON.parse(<string>reader.result);
                 importButton.onclick = async function () {
                     if (confirm('インポートを実行しますか？')) {
                         importButton.disabled = true;

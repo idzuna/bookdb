@@ -7,28 +7,24 @@
 
 ## INSTALL
 
-1. Node.js をインストールします
-2. TypeScript コンパイラをインストールします
-3. bookdb のソースコードをダウンロードして展開します
-4. 設定ファイルをコピーします
+1. Node.js をインストールします（v16.20.2 で動作確認しています）
+1. bookdb のソースコードをダウンロードして展開します
+1. 設定ファイルをコピーし，必要に応じて編集します
    ```
-   $ cd bookdb
-   $ cp config.ts.txt config.ts
-   $ cp secrets.ts.txt secrets.ts
+   cd bookdb
+   cp config.ts.txt config.ts
+   cp secrets.ts.txt secrets.ts
    ```
-5. 依存パッケージをインストールします
+1. 依存パッケージをインストールしてビルドします
    ```
-   $ npm install
+   npm install
+   npm run build
    ```
-6. TypeScript をコンパイルします
+1. 起動します
    ```
-   $ tsc
+   node app
    ```
-7. 起動します
-   ```
-   $ node app
-   ```
-8. ブラウザからアクセスします (http://localhost:3000/)
+1. ブラウザからアクセスします (http://localhost:3000/)
 
 ## LICENSE
 
@@ -46,4 +42,7 @@
   * 初版公開
 * Version 1.1.0 2018/07/14
   * 画像アップロード機能を実装
-
+* Version 1.2.0 2023/12/30
+  * Node.js v16.20.2 に対応
+  * 依存パッケージのアップデート
+  * 応答ヘッダに Cache-Control を追加

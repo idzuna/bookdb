@@ -3,7 +3,6 @@
     'applicationVersion': '1.1.0'
 };
 
-import debug = require('debug');
 import express = require('express');
 import bodyParser = require('body-parser');
 import path = require('path');
@@ -11,7 +10,6 @@ import passport = require('passport');
 import twitter = require('passport-twitter');
 import session = require('express-session');
 import sqlite3 = require('sqlite3');
-import cookieParser = require('cookie-parser');
 import net = require('net');
 
 import config from './config';
@@ -28,8 +26,10 @@ app.set('view engine', 'pug');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ type: 'application/json' }));
-app.use(cookieParser());
-
+app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    res.header('Cache-Control', ['private', 'no-store', 'no-cache', 'must-revalidate', 'proxy-revalidate'].join(','));
+    next();
+});
 
 if (config.multiUserMode) {
 
@@ -43,14 +43,14 @@ if (config.multiUserMode) {
         done(null, user);
     }));
 
-    passport.serializeUser<userdb.User, string>(function (user, done) {
-        users.set(user);
+    passport.serializeUser(function (user: any, done) {
+        users.set(<userdb.User>user);
         done(null, user['id']);
     });
 
-    passport.deserializeUser<userdb.User, string>(async function (id, done) {
+    passport.deserializeUser(async function (id, done) {
         try {
-            let user = await users.get(id);
+            let user = await users.get(<string>id);
             if (user) {
                 done(null, user);
             } else {
@@ -81,7 +81,7 @@ if (config.multiUserMode) {
     });
 
     app.get('/logout', function (req, res) {
-        req.logout();
+        req.logout(() => { });
         res.cookie('bookdbsession', '' + Math.random());
         res.redirect('/');
     });
@@ -129,7 +129,7 @@ app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    var err: any = new Error('Not Found');
     err['status'] = 404;
     next(err);
 });
@@ -139,7 +139,7 @@ app.use(function (req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-    app.use((err: any, req, res, next) => {
+    app.use((err: any, req: any, res: any, next: any) => {
         res.status(err['status'] || 500);
         res.render('error', {
             message: err.message,
@@ -150,7 +150,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err: any, req, res, next) => {
+app.use((err: any, req: any, res: any, next: any) => {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
@@ -161,5 +161,5 @@ app.use((err: any, req, res, next) => {
 app.set('port', process.env.PORT || 3000);
 
 var server = app.listen(app.get('port'), function () {
-    debug('Express server listening on port ' + (<net.AddressInfo>server.address()).port);
+    console.log('Express server listening on port ' + (<net.AddressInfo>server.address()).port);
 });

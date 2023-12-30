@@ -3,8 +3,8 @@ import sqlite3 = require('sqlite3');
 import * as promised from './promised';
 
 export class User {
-    id: string;
-    display_name: string;
+    id: string = '';
+    display_name: string = '';
 }
 
 export class UserDB {

@@ -3,13 +3,14 @@ import express = require('express');
 import path = require('path');
 import multer = require('multer');
 import jimp = require('jimp');
-import fs = require('fs-extra');
+import fs = require('fs');
 import * as bookdb from '../bookdb';
+import * as userdb from '../userdb';
 
 let upload = multer({ dest: 'uploads/' });
 
 const router = express.Router();
-const ignore = function (e) { };
+const ignore = function (e: any) { };
 
 
 function expectPositive(value: any)
@@ -36,7 +37,7 @@ function expectArray(value: any) {
         return value;
     }
 }
-async function prepareDB(req: express.Request) {
+async function prepareDB(req: any) {
     let dbname = path.join(__dirname, '..', 'bookdb', '' + (req.user ? req.user.id : 'bookdb') + '.sqlite');
     let db = new bookdb.BookDB(dbname);
     return db;
@@ -49,8 +50,8 @@ router.get('/user', async function (req, res) {
         await db.initializeTables();
         if (req.user) {
             res.status(200).json({
-                'id': req.user.id,
-                'display_name': req.user.display_name
+                'id': (<userdb.User>req.user).id,
+                'display_name': (<userdb.User>req.user).display_name
             });
         } else {
             res.status(200).json({
@@ -140,7 +141,7 @@ router.get('/user', async function (req, res) {
                     } else {
                         res.status(500).end();
                     }
-                } catch (e) {
+                } catch (e: any) {
                     if (e.code === 'SQLITE_CONSTRAINT') {
                         res.status(409).end();
                     } else {
@@ -189,8 +190,8 @@ router.get('/user', async function (req, res) {
 
 // PUT /xxx/:id
 {
-    let proc: { [key: string]: (req: express.Request) => (db: bookdb.BookDB) => Promise<boolean> } = {
-        '/books/:id': function (req: express.Request) {
+    let proc: { [key: string]: (req: any) => (db: bookdb.BookDB) => Promise<boolean> } = {
+        '/books/:id': function (req: any) {
             let object = new bookdb.Book();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -209,7 +210,7 @@ router.get('/user', async function (req, res) {
                 return db.updateBook(object);
             };
         },
-        '/authors/:id': function (req: express.Request) {
+        '/authors/:id': function (req: any) {
             let object = new bookdb.Author();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -219,7 +220,7 @@ router.get('/user', async function (req, res) {
                 return db.updateAuthor(object);
             };
         },
-        '/circles/:id': function (req: express.Request) {
+        '/circles/:id': function (req: any) {
             let object = new bookdb.Circle();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -229,7 +230,7 @@ router.get('/user', async function (req, res) {
                 return db.updateCircle(object);
             };
         },
-        '/formats/:id': function (req: express.Request) {
+        '/formats/:id': function (req: any) {
             let object = new bookdb.Format();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -237,7 +238,7 @@ router.get('/user', async function (req, res) {
                 return db.updateFormat(object);
             };
         },
-        '/media/:id': function (req: express.Request) {
+        '/media/:id': function (req: any) {
             let object = new bookdb.Media();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -245,7 +246,7 @@ router.get('/user', async function (req, res) {
                 return db.updateMedia(object);
             };
         },
-        '/sizes/:id': function (req: express.Request) {
+        '/sizes/:id': function (req: any) {
             let object = new bookdb.Size();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -253,7 +254,7 @@ router.get('/user', async function (req, res) {
                 return db.updateSize(object);
             };
         },
-        '/tags/:id': function (req: express.Request) {
+        '/tags/:id': function (req: any) {
             let object = new bookdb.Tag();
             object.id = expectPositive(req.params.id);
             object.name = expectString(req.body.name);
@@ -275,7 +276,7 @@ router.get('/user', async function (req, res) {
                     } else {
                         res.status(404).end();
                     }
-                } catch (e) {
+                } catch (e: any) {
                     if (e.code === 'SQLITE_CONSTRAINT') {
                         res.status(409).end();
                     } else {
@@ -306,10 +307,10 @@ router.delete('/tables', async function (req, res) {
     try {
         let db = await prepareDB(req);
         await db.clearAllTables();
-        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'));
-        let dir = await fs.readdir(dirname);
+        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? (<userdb.User>req.user).id : 'bookdb'));
+        let dir = await fs.promises.readdir(dirname);
         dir.forEach(function (file) {
-            fs.unlink(path.join(dirname, file));
+            fs.promises.unlink(path.join(dirname, file));
         });
         res.status(200).end();
     } catch (e) {
@@ -328,7 +329,7 @@ router.post('/tables', async function (req, res) {
     }
 });
 
-router.post('/books', async function (req: express.Request, res: express.Response) {
+router.post('/books', async function (req: any, res: express.Response) {
     try {
         let object = new bookdb.Book();
         object.name = expectString(req.body.name);
@@ -351,7 +352,7 @@ router.post('/books', async function (req: express.Request, res: express.Respons
             } else {
                 res.status(500).end();
             }
-        } catch (e) {
+        } catch (e: any) {
             if (e.code === 'SQLITE_CONSTRAINT') {
                 res.status(409).end();
             } else {
@@ -379,8 +380,8 @@ router.get('/books', async function (req, res) {
 
 router.delete('/images/:id', async function (req, res) {
     try {
-        let id = expectPositive(req.params.id);
-        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+      let id = expectPositive(req.params.id);
+      let filename = path.join(__dirname, '..', 'images', '' + (req.user ? (<userdb.User>req.user).id : 'bookdb'), '' + id);
         fs.unlink(filename, ignore);
         fs.unlink(filename + '.jpg', ignore);
         res.status(200).end();
@@ -392,7 +393,7 @@ router.delete('/images/:id', async function (req, res) {
 router.get('/images/:id', async function (req, res) {
     try {
         let id = expectPositive(req.params.id);
-        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id);
+        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? (<userdb.User>req.user).id : 'bookdb'), '' + id);
         let image = await jimp.read(filename);
         res.type(image.getMIME());
         res.sendFile(filename);
@@ -404,7 +405,7 @@ router.get('/images/:id', async function (req, res) {
 router.get('/thumbnails/:id', async function (req, res) {
     try {
         let id = expectPositive(req.params.id);
-        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'), '' + id + '.jpg');
+        let filename = path.join(__dirname, '..', 'images', '' + (req.user ? (<userdb.User>req.user).id : 'bookdb'), '' + id + '.jpg');
         res.sendFile(filename, function (err) {
             if (err) {
                 res.status(302).location('../../images/noimage.png').end();
@@ -422,8 +423,8 @@ router.put('/images/:id', upload.single('image'), async function (req, res) {
     let filename: string;
     try {
         id = expectPositive(req.params.id);
-        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? req.user.id : 'bookdb'));
-        await fs.mkdirs(dirname);
+        let dirname = path.join(__dirname, '..', 'images', '' + (req.user ? (<userdb.User>req.user).id : 'bookdb'));
+        await fs.promises.mkdir(dirname, { recursive: true });
         filename = path.join(dirname, '' + id);
     } catch (e) {
         res.status(400).end();
@@ -431,12 +432,18 @@ router.put('/images/:id', upload.single('image'), async function (req, res) {
     }
 
     // generate thumbnail
+    const p = req.file?.path;
+    if (!p) {
+        res.status(400).end();
+        return;
+    }
     try {
-        let image = await jimp.read(req.file.path);
+        let image = await jimp.read(p);
         image.scaleToFit(256, 256).quality(98).write(filename + '.jpg');
-        fs.move(req.file.path, filename, { overwrite: true }, ignore);
+        await fs.promises.rm(filename, { force: true });
+        await fs.promises.rename(p, filename);
     } catch (e) {
-        fs.unlink(req.file.path, ignore);
+        fs.unlink(p, ignore);
         fs.unlink(filename, ignore);
         fs.unlink(filename + '.jpg', ignore);
         res.status(400).end();

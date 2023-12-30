@@ -45,7 +45,7 @@ export function exec(db: sqlite3.Database, sql: string) {
                 reject(err);
                 return;
             }
-            resolve();
+            resolve(null);
         });
     });
 }

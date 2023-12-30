@@ -16,8 +16,8 @@ function getEditting() {
     return _editing;
 }
 
-function collectChildSelectsValues(parent: HTMLElement) {
-    let elem = parent.firstElementChild;
+function collectChildSelectsValues(parent: HTMLElement | null) {
+    let elem = parent?.firstElementChild;
     let values: number[] = [];
     while (elem) {
         if (elem.tagName === 'SELECT') {
@@ -31,8 +31,8 @@ function collectChildSelectsValues(parent: HTMLElement) {
     return values;
 }
 
-function collectChildTextInputsValues(parent: HTMLElement) {
-    let elem = parent.firstElementChild;
+function collectChildTextInputsValues(parent: HTMLElement | null) {
+    let elem = parent?.firstElementChild;
     let values: string[] = [];
     while (elem) {
         if (elem.tagName === 'INPUT' && (<HTMLInputElement>elem).type === 'text') {
@@ -46,7 +46,10 @@ function collectChildTextInputsValues(parent: HTMLElement) {
 }
 
 
-function removeAllChildNodes(node: Node) {
+function removeAllChildNodes(node: Node | null) {
+    if (!node) {
+        return;
+    }
     while (node.firstChild) {
         node.removeChild(node.firstChild);
     }
@@ -71,14 +74,14 @@ function parallel(funcarray: Array<() => Promise<void>>) {
 function createTd(text: string, className?: string) {
     let td = document.createElement('td');
     td.innerText = text;
-    td.className = className;
+    td.className = className || '';
     return td;
 }
 
 function createTh(text: string, className?: string) {
     let th = document.createElement('th');
     th.innerText = text;
-    th.className = className;
+    th.className = className || '';
     return th;
 }
 
@@ -229,9 +232,7 @@ function createAuthorsSelect(value?: string) {
             let name = window.prompt('新しい著者名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let author = new Author();
-                author.name = name;
-                db.createAuthor(author).then(function (id) {
+                db.createAuthor(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -263,9 +264,7 @@ function createCirclesSelect(value?: string) {
             let name = window.prompt('新しいサークル名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let circle = new Circle();
-                circle.name = name;
-                db.createCircle(circle).then(function (id) {
+                db.createCircle(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -297,9 +296,7 @@ function createFormatsSelect(value?: string) {
             let name = window.prompt('新しい形式名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let format = new Format();
-                format.name = name;
-                db.createFormat(format).then(function (id) {
+                db.createFormat(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -331,9 +328,7 @@ function createMediaSelect(value?: string) {
             let name = window.prompt('新しい媒体名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let media = new Media();
-                media.name = name;
-                db.createMedia(media).then(function (id) {
+                db.createMedia(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -365,9 +360,7 @@ function createSizesSelect(value?: string) {
             let name = window.prompt('新しいサイズ名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let size = new Size();
-                size.name = name;
-                db.createSize(size).then(function (id) {
+                db.createSize(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -399,9 +392,7 @@ function createTagsSelect(value?: string) {
             let name = window.prompt('新しいタグ名');
             if (name != null && name != '') {
                 select.disabled = true;
-                let tag = new Tag();
-                tag.name = name;
-                db.createTag(tag).then(function (id) {
+                db.createTag(name).then(function (id) {
                     select.disabled = false;
                     let option = document.createElement('option');
                     option.value = '' + id;
@@ -591,7 +582,7 @@ function openAuthorDetailWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('著者名');
@@ -600,7 +591,7 @@ function openAuthorDetailWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('URL');
@@ -620,7 +611,7 @@ function openAuthorDetailWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('関連サークル');
@@ -629,7 +620,7 @@ function openAuthorDetailWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -644,7 +635,7 @@ function openAuthorDetailWindow(author: Author) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -660,7 +651,7 @@ function openCircleDetailWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('サークル名');
@@ -669,7 +660,7 @@ function openCircleDetailWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('URL');
@@ -689,7 +680,7 @@ function openCircleDetailWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('関連著者');
@@ -698,7 +689,7 @@ function openCircleDetailWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -713,7 +704,7 @@ function openCircleDetailWindow(circle: Circle) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -726,7 +717,7 @@ function openFormatDetailWindow(format: Format) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('形式名');
@@ -735,7 +726,7 @@ function openFormatDetailWindow(format: Format) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -750,7 +741,7 @@ function openFormatDetailWindow(format: Format) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -763,7 +754,7 @@ function openMediaDetailWindow(media: Media) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('媒体名');
@@ -772,7 +763,7 @@ function openMediaDetailWindow(media: Media) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -787,7 +778,7 @@ function openMediaDetailWindow(media: Media) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -800,7 +791,7 @@ function openSizeDetailWindow(size: Size) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('サイズ名');
@@ -809,7 +800,7 @@ function openSizeDetailWindow(size: Size) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -824,7 +815,7 @@ function openSizeDetailWindow(size: Size) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -840,7 +831,7 @@ function openTagDetailWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('タグ名');
@@ -849,7 +840,7 @@ function openTagDetailWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('備考');
@@ -858,7 +849,7 @@ function openTagDetailWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -873,7 +864,7 @@ function openTagDetailWindow(tag: Tag) {
         th.appendChild(input);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -887,7 +878,7 @@ function openAuthorEditWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('著者名');
@@ -898,7 +889,7 @@ function openAuthorEditWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('URL');
@@ -917,7 +908,7 @@ function openAuthorEditWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('関連サークル');
@@ -936,7 +927,7 @@ function openAuthorEditWindow(author: Author) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -971,7 +962,7 @@ function openAuthorEditWindow(author: Author) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -984,7 +975,7 @@ function openCircleEditWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('サークル名');
@@ -995,7 +986,7 @@ function openCircleEditWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('URL');
@@ -1014,7 +1005,7 @@ function openCircleEditWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('関連著者');
@@ -1033,7 +1024,7 @@ function openCircleEditWindow(circle: Circle) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -1068,7 +1059,7 @@ function openCircleEditWindow(circle: Circle) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -1081,7 +1072,7 @@ function openFormatEditWindow(format: Format) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('形式名');
@@ -1092,7 +1083,7 @@ function openFormatEditWindow(format: Format) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -1125,7 +1116,7 @@ function openFormatEditWindow(format: Format) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -1138,7 +1129,7 @@ function openMediaEditWindow(media: Media) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('媒体名');
@@ -1149,7 +1140,7 @@ function openMediaEditWindow(media: Media) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -1182,7 +1173,7 @@ function openMediaEditWindow(media: Media) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -1195,7 +1186,7 @@ function openSizeEditWindow(size: Size) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('サイズ名');
@@ -1206,7 +1197,7 @@ function openSizeEditWindow(size: Size) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -1239,7 +1230,7 @@ function openSizeEditWindow(size: Size) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
@@ -1252,7 +1243,7 @@ function openTagEditWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('タグ名');
@@ -1263,7 +1254,7 @@ function openTagEditWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = createTh('備考');
@@ -1274,7 +1265,7 @@ function openTagEditWindow(tag: Tag) {
         let tr = document.createElement('tr');
         tr.appendChild(th);
         tr.appendChild(td);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
     {
         let th = document.createElement('th');
@@ -1308,15 +1299,15 @@ function openTagEditWindow(tag: Tag) {
         th.appendChild(save);
         let tr = document.createElement('tr');
         tr.appendChild(th);
-        document.getElementById('attribute').appendChild(tr);
+        document.getElementById('attribute')?.appendChild(tr);
     }
 }
 
 
 function collectAuthorDetail() {
     let author = new Author();
-    author.id = parseInt(document.getElementById('author_id').innerText);
-    author.name = (<HTMLInputElement>document.getElementById('author_name').firstElementChild).value;
+    author.id = parseInt(document.getElementById('author_id')?.innerText || '');
+    author.name = (<HTMLInputElement>document.getElementById('author_name')?.firstElementChild).value;
     author.urls = collectChildTextInputsValues(document.getElementById('author_urls'));
     author.circle_ids = collectChildSelectsValues(document.getElementById('author_circles'));
     return author;
@@ -1324,8 +1315,8 @@ function collectAuthorDetail() {
 
 function collectCircleDetail() {
     let circle = new Circle();
-    circle.id = parseInt(document.getElementById('circle_id').innerText);
-    circle.name = (<HTMLInputElement>document.getElementById('circle_name').firstElementChild).value;
+    circle.id = parseInt(document.getElementById('circle_id')?.innerText || '');
+    circle.name = (<HTMLInputElement>document.getElementById('circle_name')?.firstElementChild).value;
     circle.urls = collectChildTextInputsValues(document.getElementById('circle_urls'));
     circle.author_ids = collectChildSelectsValues(document.getElementById('circle_authors'));
     return circle;
@@ -1333,37 +1324,37 @@ function collectCircleDetail() {
 
 function collectFormatDetail() {
     let format = new Format();
-    format.id = parseInt(document.getElementById('format_id').innerText);
-    format.name = (<HTMLInputElement>document.getElementById('format_name').firstElementChild).value;
+    format.id = parseInt(document.getElementById('format_id')?.innerText || '');
+    format.name = (<HTMLInputElement>document.getElementById('format_name')?.firstElementChild).value;
     return format;
 }
 
 function collectMediaDetail() {
     let media = new Media();
-    media.id = parseInt(document.getElementById('media_id').innerText);
-    media.name = (<HTMLInputElement>document.getElementById('media_name').firstElementChild).value;
+    media.id = parseInt(document.getElementById('media_id')?.innerText || '');
+    media.name = (<HTMLInputElement>document.getElementById('media_name')?.firstElementChild).value;
     return media;
 }
 
 function collectSizeDetail() {
     let size = new Size();
-    size.id = parseInt(document.getElementById('size_id').innerText);
-    size.name = (<HTMLInputElement>document.getElementById('size_name').firstElementChild).value;
+    size.id = parseInt(document.getElementById('size_id')?.innerText || '');
+    size.name = (<HTMLInputElement>document.getElementById('size_name')?.firstElementChild).value;
     return size;
 }
 
 function collectTagDetail() {
     let tag = new Tag();
-    tag.id = parseInt(document.getElementById('tag_id').innerText);
-    tag.name = (<HTMLInputElement>document.getElementById('tag_name').firstElementChild).value;
-    tag.note = (<HTMLInputElement>document.getElementById('tag_note').firstElementChild).value;
+    tag.id = parseInt(document.getElementById('tag_id')?.innerText || '');
+    tag.name = (<HTMLInputElement>document.getElementById('tag_name')?.firstElementChild).value;
+    tag.note = (<HTMLInputElement>document.getElementById('tag_note')?.firstElementChild).value;
     return tag;
 }
 
 
 let bookDetailWindow = new class {
 
-    private openningBook: Book;
+    private openningBook: Book | null = null;
 
     close() {
         (<HTMLInputElement>document.getElementById('book_set_default')).disabled = true;
@@ -1389,10 +1380,11 @@ let bookDetailWindow = new class {
 
         bookDetailWindow.close();
 
+        const elem = (id: string) => <HTMLElement>document.getElementById(id);
         let format = book.format_id ? db.formats[book.format_id].name : '';
         let size = book.size_id ? db.sizes[book.size_id].name : '';
         {
-            let cell = document.getElementById('book_image');
+            let cell = elem('book_image');
             let img = document.createElement('img');
             img.src = db.getThumbnailUrl(book.id);
             let a = document.createElement('a');
@@ -1403,6 +1395,9 @@ let bookDetailWindow = new class {
             cell.appendChild(document.createElement('br'));
             let fileInput = createInput('file', 'ファイル');
             fileInput.onchange = function () {
+                if (!fileInput.files) {
+                    return;
+                }
                 setEditing(true);
                 db.uploadImage(book.id, fileInput.files[0]).then(async function () {
                     img.src = db.getThumbnailUrl(book.id);
@@ -1436,19 +1431,19 @@ let bookDetailWindow = new class {
             };
             cell.appendChild(deleteButton);
         }
-        document.getElementById('book_id').innerText = '' + book.id;
-        document.getElementById('book_name').innerText = book.name;
-        document.getElementById('book_is_xrated').innerText = book.is_xrated ? 'はい' : 'いいえ';
-        generateFormatButtons(document.getElementById('book_format'), [book.format_id]);
-        generateSizeButtons(document.getElementById('book_size'), [book.size_id]);
-        document.getElementById('book_published_on').innerText = book.published_on;
-        document.getElementById('book_bought_on').innerText = book.bought_on;
-        document.getElementById('book_location').innerText = book.location;
-        document.getElementById('book_note').innerText = book.note;
-        generateCirclesButtons(document.getElementById('book_circles'), book.circle_ids);
-        generateAuthorsButtons(document.getElementById('book_authors'), book.author_ids);
-        generateMediaButtons(document.getElementById('book_media'), book.media_ids);
-        generateTagsButtons(document.getElementById('book_tags'), book.tag_ids);
+        elem('book_id').innerText = '' + book.id;
+        elem('book_name').innerText = book.name;
+        elem('book_is_xrated').innerText = book.is_xrated ? 'はい' : 'いいえ';
+        generateFormatButtons(elem('book_format'), [book.format_id]);
+        generateSizeButtons(elem('book_size'), [book.size_id]);
+        elem('book_published_on').innerText = book.published_on;
+        elem('book_bought_on').innerText = book.bought_on;
+        elem('book_location').innerText = book.location;
+        elem('book_note').innerText = book.note;
+        generateCirclesButtons(elem('book_circles'), book.circle_ids);
+        generateAuthorsButtons(elem('book_authors'), book.author_ids);
+        generateMediaButtons(elem('book_media'), book.media_ids);
+        generateTagsButtons(elem('book_tags'), book.tag_ids);
         {
             let input = createInput('button', '編集');
             input.id = 'book_commands_edit';
@@ -1457,7 +1452,7 @@ let bookDetailWindow = new class {
                 setEditing(true);
                 bookDetailWindow.edit(book);
             }
-            document.getElementById('book_commands').appendChild(input);
+            elem('book_commands').appendChild(input);
         }
         {
             let input = createInput('button', 'ひな形にして新規作成');
@@ -1468,7 +1463,7 @@ let bookDetailWindow = new class {
                 bookDetailWindow.edit(book, true);
                 bookList.deselect();
             };
-            document.getElementById('book_commands').appendChild(input);
+            elem('book_commands').appendChild(input);
         }
         {
             let input = createInput('button', '削除');
@@ -1490,7 +1485,7 @@ let bookDetailWindow = new class {
                     bookList.deselect();
                 }
             };
-            document.getElementById('book_commands').appendChild(input);
+            elem('book_commands').appendChild(input);
         }
 
         bookDetailWindow.openningBook = book;
@@ -1506,71 +1501,73 @@ let bookDetailWindow = new class {
 
     edit(book: Book, isNew: boolean = false) {
 
+        const elem = (id: string) => <HTMLElement>document.getElementById(id);
+
         bookDetailWindow.close();
         (<HTMLInputElement>document.getElementById('book_set_default')).disabled = false;
         (<HTMLInputElement>document.getElementById('book_set_default')).onclick = function () {
             localStorage.setItem('default_book_info', JSON.stringify(bookDetailWindow.collect()));
         };
 
-        document.getElementById('book_id').innerText = isNew ? '新規' : '' + book.id;
-        document.getElementById('book_name').appendChild(createInput('text', book.name));
+        elem('book_id').innerText = isNew ? '新規' : '' + book.id;
+        elem('book_name').appendChild(createInput('text', book.name));
         {
             let checkbox = createInput('checkbox');
             checkbox.checked = book.is_xrated;
-            document.getElementById('book_is_xrated').appendChild(checkbox);
+            elem('book_is_xrated').appendChild(checkbox);
         }
-        document.getElementById('book_format').appendChild(createFormatsSelect('' + book.format_id));
-        document.getElementById('book_size').appendChild(createSizesSelect('' + book.size_id));
-        document.getElementById('book_published_on').appendChild(createInput('text', book.published_on));
-        document.getElementById('book_bought_on').appendChild(createInput('text', book.bought_on));
-        document.getElementById('book_location').appendChild(createInput('text', book.location));
-        document.getElementById('book_note').appendChild(createInput('text', book.note));
+        elem('book_format').appendChild(createFormatsSelect('' + book.format_id));
+        elem('book_size').appendChild(createSizesSelect('' + book.size_id));
+        elem('book_published_on').appendChild(createInput('text', book.published_on));
+        elem('book_bought_on').appendChild(createInput('text', book.bought_on));
+        elem('book_location').appendChild(createInput('text', book.location));
+        elem('book_note').appendChild(createInput('text', book.note));
         {
             let input = createInput('button', '欄を追加');
             input.onclick = function () {
-                document.getElementById('book_circles').appendChild(document.createElement('br'));
-                document.getElementById('book_circles').appendChild(createCirclesSelect());
+                elem('book_circles').appendChild(document.createElement('br'));
+                elem('book_circles').appendChild(createCirclesSelect());
             }
-            document.getElementById('book_circles').appendChild(input);
+            elem('book_circles').appendChild(input);
             book.circle_ids.forEach(function (circle_id) {
-                document.getElementById('book_circles').appendChild(document.createElement('br'));
-                document.getElementById('book_circles').appendChild(createCirclesSelect('' + circle_id));
+                elem('book_circles').appendChild(document.createElement('br'));
+                elem('book_circles').appendChild(createCirclesSelect('' + circle_id));
             });
         }
         {
             let input = createInput('button', '欄を追加');
             input.onclick = function () {
-                document.getElementById('book_authors').appendChild(document.createElement('br'));
-                document.getElementById('book_authors').appendChild(createAuthorsSelect());
+                elem('book_authors').appendChild(document.createElement('br'));
+                elem('book_authors').appendChild(createAuthorsSelect());
             }
-            document.getElementById('book_authors').appendChild(input);
+            elem('book_authors').appendChild(input);
             book.author_ids.forEach(function (author_id) {
-                document.getElementById('book_authors').appendChild(document.createElement('br'));
-                document.getElementById('book_authors').appendChild(createAuthorsSelect('' + author_id));
+                elem('book_authors').appendChild(document.createElement('br'));
+                elem('book_authors').appendChild(createAuthorsSelect('' + author_id));
             });
         }
         {
             let input = createInput('button', '欄を追加');
             input.onclick = function () {
-                document.getElementById('book_media').appendChild(document.createElement('br'));
-                document.getElementById('book_media').appendChild(createMediaSelect());
+                elem('book_media').appendChild(document.createElement('br'));
+                elem('book_media').appendChild(createMediaSelect());
             }
-            document.getElementById('book_media').appendChild(input);
+            elem('book_media').appendChild(input);
             book.media_ids.forEach(function (media_id) {
-                document.getElementById('book_media').appendChild(document.createElement('br'));
-                document.getElementById('book_media').appendChild(createMediaSelect('' + media_id));
+                elem('book_media').appendChild(document.createElement('br'));
+                elem('book_media').appendChild(createMediaSelect('' + media_id));
             });
         }
         {
             let input = createInput('button', '欄を追加');
             input.onclick = function () {
-                document.getElementById('book_tags').appendChild(document.createElement('br'));
-                document.getElementById('book_tags').appendChild(createTagsSelect());
+                elem('book_tags').appendChild(document.createElement('br'));
+                elem('book_tags').appendChild(createTagsSelect());
             }
-            document.getElementById('book_tags').appendChild(input);
+            elem('book_tags').appendChild(input);
             book.tag_ids.forEach(function (tag_id) {
-                document.getElementById('book_tags').appendChild(document.createElement('br'));
-                document.getElementById('book_tags').appendChild(createTagsSelect('' + tag_id));
+                elem('book_tags').appendChild(document.createElement('br'));
+                elem('book_tags').appendChild(createTagsSelect('' + tag_id));
             });
         }
 
@@ -1619,9 +1616,9 @@ let bookDetailWindow = new class {
                     done.disabled = false;
                 });
             }
-            document.getElementById('book_commands').appendChild(cancel);
-            document.getElementById('book_commands').appendChild(register);
-            document.getElementById('book_commands').appendChild(done);
+            elem('book_commands').appendChild(cancel);
+            elem('book_commands').appendChild(register);
+            elem('book_commands').appendChild(done);
         } else {
             let cancel = createInput('button', 'キャンセル');
             let register = createInput('button', '登録');
@@ -1647,30 +1644,31 @@ let bookDetailWindow = new class {
                     register.disabled = false;
                 });
             }
-            document.getElementById('book_commands').appendChild(cancel);
-            document.getElementById('book_commands').appendChild(register);
+            elem('book_commands').appendChild(cancel);
+            elem('book_commands').appendChild(register);
         }
     }
 
     collect() {
+        const elem = (id: string) => <HTMLElement>document.getElementById(id);
         let book = new Book();
-        book.id = parseInt(document.getElementById('book_id').innerText);
-        book.name = (<HTMLInputElement>document.getElementById('book_name').firstElementChild).value;
-        book.is_xrated = (<HTMLInputElement>document.getElementById('book_is_xrated').firstElementChild).checked;
-        book.format_id = parseInt((<HTMLSelectElement>document.getElementById('book_format').firstElementChild).value);
-        book.size_id = parseInt((<HTMLSelectElement>document.getElementById('book_size').firstElementChild).value);
-        book.published_on = (<HTMLInputElement>document.getElementById('book_published_on').firstElementChild).value;
-        book.bought_on = (<HTMLInputElement>document.getElementById('book_bought_on').firstElementChild).value;
-        book.location = (<HTMLInputElement>document.getElementById('book_location').firstElementChild).value;
-        book.note = (<HTMLInputElement>document.getElementById('book_note').firstElementChild).value;
+        book.id = parseInt(elem('book_id').innerText);
+        book.name = (<HTMLInputElement>elem('book_name').firstElementChild).value;
+        book.is_xrated = (<HTMLInputElement>elem('book_is_xrated').firstElementChild).checked;
+        book.format_id = parseInt((<HTMLSelectElement>elem('book_format').firstElementChild).value);
+        book.size_id = parseInt((<HTMLSelectElement>elem('book_size').firstElementChild).value);
+        book.published_on = (<HTMLInputElement>elem('book_published_on').firstElementChild).value;
+        book.bought_on = (<HTMLInputElement>elem('book_bought_on').firstElementChild).value;
+        book.location = (<HTMLInputElement>elem('book_location').firstElementChild).value;
+        book.note = (<HTMLInputElement>elem('book_note').firstElementChild).value;
         book.author_ids = [];
         book.circle_ids = [];
         book.media_ids = [];
         book.tag_ids = [];
-        book.author_ids = collectChildSelectsValues(document.getElementById('book_authors'));
-        book.circle_ids = collectChildSelectsValues(document.getElementById('book_circles'));
-        book.media_ids = collectChildSelectsValues(document.getElementById('book_media'));
-        book.tag_ids = collectChildSelectsValues(document.getElementById('book_tags'));
+        book.author_ids = collectChildSelectsValues(elem('book_authors'));
+        book.circle_ids = collectChildSelectsValues(elem('book_circles'));
+        book.media_ids = collectChildSelectsValues(elem('book_media'));
+        book.tag_ids = collectChildSelectsValues(elem('book_tags'));
         return book;
     }
     
@@ -1701,7 +1699,7 @@ let bookList = new class {
     selected: number = 0;
 
     deselect() {
-        let elem = document.getElementById('booklist').firstElementChild;
+        let elem = document.getElementById('booklist')?.firstElementChild;
         while (elem) {
             elem.className = '';
             elem = elem.nextElementSibling;
@@ -1711,8 +1709,9 @@ let bookList = new class {
 
     select(id: number) {
         bookList.deselect();
-        if (document.getElementById('book' + id)) {
-            document.getElementById('book' + id).className = 'active';
+        const elem = document.getElementById('book' + id);
+        if (elem) {
+            elem.className = 'active';
             bookList.selected = id;
         }
     }
@@ -1800,7 +1799,7 @@ let bookList = new class {
                     bookDetailWindow.open(db.books[id]);
                 }
             }
-            document.getElementById('booklist').appendChild(tr);
+            document.getElementById('booklist')?.appendChild(tr);
         }
         bookList.select(bookList.selected);
     }
@@ -1808,18 +1807,20 @@ let bookList = new class {
 
 
 function initializeDragBar() {
+    const elem = (id: string) => <HTMLElement>document.getElementById(id);
     let rightColumnWidth = 300;
     let lowerBlockHeight = 300;
-    let vertical = document.getElementById('vertical_bar');
-    let horizontal = document.getElementById('horizontal_bar');
+    let vertical = elem('vertical_bar');
+    let horizontal = elem('horizontal_bar');
 
     let reshape = function () {
-        let contentHeight = document.body.clientHeight - document.getElementById('navigation').offsetHeight;
-        document.getElementById('content').style.height = '' + contentHeight + 'px';
-        document.getElementById('left_column').style.width = '' + (document.body.clientWidth - rightColumnWidth - 1) + 'px';
-        document.getElementById('right_column').style.width = '' + rightColumnWidth + 'px';
-        document.getElementById('upper_block').style.height = '' + (contentHeight - lowerBlockHeight - horizontal.offsetHeight) + 'px';
-        document.getElementById('lower_block').style.height = '' + lowerBlockHeight + 'px';
+
+        let contentHeight = document.body.clientHeight - elem('navigation').offsetHeight;
+        elem('content').style.height = '' + contentHeight + 'px';
+        elem('left_column').style.width = '' + (document.body.clientWidth - rightColumnWidth - 1) + 'px';
+        elem('right_column').style.width = '' + rightColumnWidth + 'px';
+        elem('upper_block').style.height = '' + (contentHeight - lowerBlockHeight - horizontal.offsetHeight) + 'px';
+        elem('lower_block').style.height = '' + lowerBlockHeight + 'px';
     }
     window.onresize = reshape;
     reshape();
@@ -1876,12 +1877,12 @@ window.onload = function () {
         await db.updateBooks();
         bookList.update();
         setEditing(false);
-        document.getElementById('book_new').onclick = function (e) {
+        document.getElementById('book_new')?.addEventListener('click', function (e) {
             setEditing(true);
             bookList.deselect();
             let book = bookDetailWindow.getDefault();
             bookDetailWindow.edit(book, true);
-        };
+        });
     })().catch(function () {
         window.alert('サーバーとの通信に失敗しました\nページを再読み込みしてください');
     });

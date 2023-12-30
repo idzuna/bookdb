@@ -3,44 +3,44 @@ import sqlite3 = require('sqlite3');
 
 
 export class Circle {
-    id: number;
-    name: string;
-    urls: string[];
-    author_ids: number[];
+    id: number = 0;
+    name: string = '';
+    urls: string[] = [];
+    author_ids: number[] = [];
 }
 export class Author {
-    id: number;
-    name: string;
-    urls: string[];
-    circle_ids: number[];
+    id: number = 0;
+    name: string = '';
+    urls: string[] = [];
+    circle_ids: number[] = [];
 }
 export class Tag {
-    id: number;
-    name: string;
-    note: string;
+    id: number = 0;
+    name: string = '';
+    note: string = '';
 }
 export class Size {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 export class Media {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 export class Format {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 export class Book {
-    id: number;
-    name: string;
-    is_xrated: boolean;
-    format_id: number;
-    size_id: number;
-    published_on: string;
-    bought_on: string;
-    location: string;
-    note: string;
+    id: number = 0;
+    name: string = '';
+    is_xrated: boolean = false;
+    format_id: number = 0;
+    size_id: number = 0;
+    published_on: string = '';
+    bought_on: string = '';
+    location: string = '';
+    note: string = '';
     author_ids: number[] = [];
     circle_ids: number[] = [];
     media_ids: number[] = [];
@@ -80,7 +80,7 @@ export class BookDB {
     }
 
     private extractElements(elementName: string, objects: any[]) {
-        let arr = [];
+        let arr: any[] = [];
         objects.forEach(function (object) {
             arr.push(object[elementName]);
         });
@@ -134,7 +134,7 @@ export class BookDB {
                     reject(err);
                     return;
                 }
-                resolve();
+                resolve(null);
             });
         });
     }
@@ -190,7 +190,7 @@ export class BookDB {
             if (typeof data.body !== 'object') {
                 throw Error();
             }
-            let body: { [key: string]: {}[] } = data.body;
+            let body: { [key: string]: any[] } = data.body;
             for (let tableName in tableStruct) {
                 if (!Array.isArray(body[tableName])) {
                     throw Error();
@@ -227,7 +227,7 @@ export class BookDB {
     async exportAllTables() {
         let data = {
             'version': 1,
-            'body': {}
+            'body': <any>{}
         };
         for (let tableName in tableStruct) {
             data.body[tableName] = await this.promisedAll('SELECT * FROM ' + tableName, []);

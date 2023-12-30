@@ -1,43 +1,43 @@
 ﻿
 class Circle {
-    id: number;
-    name: string;
-    urls: string[];
-    author_ids: number[];
+    id: number = 0;
+    name: string = '';
+    urls: string[] = [];
+    author_ids: number[] = [];
 }
 class Author {
-    id: number;
-    name: string;
-    urls: string[];
-    circle_ids: number[];
+    id: number = 0;
+    name: string = '';
+    urls: string[] = [];
+    circle_ids: number[] = [];
 }
 class Tag {
-    id: number;
-    name: string;
-    note: string;
+    id: number = 0;
+    name: string = '';
+    note: string = '';
 }
 class Size {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 class Media {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 class Format {
-    id: number;
-    name: string;
+    id: number = 0;
+    name: string = '';
 }
 class Book {
-    id: number;
-    name: string;
-    is_xrated: boolean;
-    format_id: number;
-    size_id: number;
-    published_on: string;
-    bought_on: string;
-    location: string;
-    note: string;
+    id: number = 0;
+    name: string = '';
+    is_xrated: boolean = false;
+    format_id: number = 0;
+    size_id: number = 0;
+    published_on: string = '';
+    bought_on: string = '';
+    location: string = '';
+    note: string = '';
     author_ids: number[] = [];
     circle_ids: number[] = [];
     media_ids: number[] = [];
@@ -46,6 +46,10 @@ class Book {
 class User {
     id: string;
     display_name: string;
+    constructor(id: string, display_name: string) {
+        this.id = id;
+        this.display_name = display_name;
+    }
 }
 
 let db = new class {
@@ -58,7 +62,7 @@ let db = new class {
     formats: { [key: number]: Format } = { };
     books: { [key: number]: Book } = {};
     thumbnails: { [key: number]: string } = {};
-    user = new User();
+    user: User | undefined;
     session = '';
     valid = false;
     
@@ -73,7 +77,7 @@ let db = new class {
         return '';
     }
 
-    private sendRequest(method: string, url: string, data: any = null, type: string = null) {
+    private sendRequest(method: string, url: string, data: any = null, type: string = '') {
         return new Promise<any>(function (resolve, reject) {
             if (!db.valid) {
                 return;
@@ -91,7 +95,7 @@ let db = new class {
                         if (this.response) {
                             resolve(JSON.parse(xhr.responseText));
                         } else {
-                            resolve();
+                            resolve(null);
                         }
                     } else {
                         reject();
@@ -123,10 +127,10 @@ let db = new class {
     async updateAuthors() {
         let items = await db.getJSON('authors');
         db.authors = {};
-        items.forEach(function (item) {
-            let object = new Author();
+        items.forEach(function (item: any) {
+            let object = new Author()
             object.id = parseInt(item['id']);
-            object.name = item['name'];
+            object.name =  item['name'];
             db.authors[object.id] = object;
         });
     }
@@ -134,7 +138,7 @@ let db = new class {
     async updateCircles() {
         let items = await db.getJSON('circles');
         db.circles = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Circle();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -145,7 +149,7 @@ let db = new class {
     async updateFormats() {
         let items = await db.getJSON('formats');
         db.formats = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Format();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -156,7 +160,7 @@ let db = new class {
     async updateMedia() {
         let items = await db.getJSON('media');
         db.media = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Media();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -167,7 +171,7 @@ let db = new class {
     async updateSizes() {
         let items = await db.getJSON('sizes');
         db.sizes = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Size();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -178,7 +182,7 @@ let db = new class {
     async updateTags() {
         let items = await db.getJSON('tags');
         db.tags = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Tag();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -189,7 +193,7 @@ let db = new class {
     async updateBooks() {
         let items = await db.getJSON('books');
         db.books = {};
-        items.forEach(function (item) {
+        items.forEach(function (item: any) {
             let object = new Book();
             object.id = parseInt(item['id']);
             object.name = item['name'];
@@ -200,16 +204,16 @@ let db = new class {
             object.bought_on = item['bought_on'];
             object.location = item['location'];
             object.note = item['note'];
-            item['author_ids'].forEach(function (id) {
+            item['author_ids'].forEach(function (id: any) {
                 object.author_ids.push(parseInt(id));
             });
-            item['circle_ids'].forEach(function (id) {
+            item['circle_ids'].forEach(function (id: any) {
                 object.circle_ids.push(parseInt(id));
             });
-            item['media_ids'].forEach(function (id) {
+            item['media_ids'].forEach(function (id: any) {
                 object.media_ids.push(parseInt(id));
             });
-            item['tag_ids'].forEach(function (id) {
+            item['tag_ids'].forEach(function (id: any) {
                 object.tag_ids.push(parseInt(id));
             });
             db.books[object.id] = object;
@@ -267,8 +271,8 @@ let db = new class {
     }
 
 
-    async createAuthor(author: Author) {
-        let json = await db.sendJSON('POST', 'authors', author);
+    async createAuthor(name: string) {
+        let json = await db.sendJSON('POST', 'authors', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
@@ -276,8 +280,8 @@ let db = new class {
         }
     }
 
-    async createCircle(circle: Circle) {
-        let json = await db.sendJSON('POST', 'circles', circle);
+    async createCircle(name: string) {
+        let json = await db.sendJSON('POST', 'circles', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
@@ -285,8 +289,8 @@ let db = new class {
         }
     }
 
-    async createFormat(format: Format) {
-        let json = await db.sendJSON('POST', 'formats', format);
+    async createFormat(name: string) {
+        let json = await db.sendJSON('POST', 'formats', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
@@ -294,8 +298,8 @@ let db = new class {
         }
     }
 
-    async createMedia(media: Media) {
-        let json = await db.sendJSON('POST', 'media', media);
+    async createMedia(name: string) {
+        let json = await db.sendJSON('POST', 'media', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
@@ -303,8 +307,8 @@ let db = new class {
         }
     }
 
-    async createSize(size: Size) {
-        let json = await db.sendJSON('POST', 'sizes', size);
+    async createSize(name: string) {
+        let json = await db.sendJSON('POST', 'sizes', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
@@ -312,8 +316,8 @@ let db = new class {
         }
     }
 
-    async createTag(tag: Tag) {
-        let json = await db.sendJSON('POST', 'tags', tag);
+    async createTag(name: string) {
+        let json = await db.sendJSON('POST', 'tags', { name: name });
         if (json && 'id' in json && parseInt(json.id) > 0) {
             return parseInt(json.id);
         } else {
