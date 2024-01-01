@@ -10,14 +10,20 @@ html
       if (!config.multiUserMode || user)
         #mainmenu
           a(href="./") トップ
-          | &nbsp;|&nbsp;
+          |
+          | |
+          |
           a(href="edit") 蔵書一覧
-          | &nbsp;|&nbsp;
+          |
+          | |
+          |
           a(href="manage") データ管理
       if (config.multiUserMode && user)
         #usermenu
           | #{user.display_name} さん
-          | &nbsp;|&nbsp;
+          |
+          | |
+          |
           a(href="logout") ログアウト
       .clear
     #content
