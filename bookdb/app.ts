@@ -1,6 +1,6 @@
 ﻿let system = {
     'applicationName': '同人誌蔵書管理ツール',
-    'applicationVersion': '1.1.0'
+    'applicationVersion': '1.2.1'
 };
 
 import express = require('express');
